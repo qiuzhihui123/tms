@@ -3,12 +3,12 @@ package com.kaishengit.tms.service.impl;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import com.kaishengit.tms.entity.*;
+import com.kaishengit.tms.entity.manage.*;
 import com.kaishengit.tms.exception.ServiceException;
-import com.kaishengit.tms.mapper.AccountRolesMapper;
-import com.kaishengit.tms.mapper.PermissionMapper;
-import com.kaishengit.tms.mapper.RolesMapper;
-import com.kaishengit.tms.mapper.RolesPermissionMapper;
+import com.kaishengit.tms.mapper.manage.AccountRolesMapper;
+import com.kaishengit.tms.mapper.manage.PermissionMapper;
+import com.kaishengit.tms.mapper.manage.RolesMapper;
+import com.kaishengit.tms.mapper.manage.RolesPermissionMapper;
 import com.kaishengit.tms.service.RolePermissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,9 +145,7 @@ public class RolePermissionServiceImpl implements RolePermissionService {
     }
 
     /**
-     * 描述:根据id查找角色
-     *
-     * @param id
+     * 描述:根据角色id查找角色并带有该角色相应的权限
      * @参数:[id]
      * @返回值com.kaishengit.tms.entity.Roles
      */
@@ -255,6 +253,17 @@ public class RolePermissionServiceImpl implements RolePermissionService {
 
 
 
+    }
+
+    /**
+     * @param id
+     * @描述:根据account的id去查找该账户所具有的角色
+     * @参数:[id] 当前account的id
+     * @返回值java.util.List<com.kaishengit.tms.entity.Roles> roles的List集合
+     */
+    @Override
+    public List<Roles> findAccountRolesByAccountId(Integer id) {
+        return rolesMapper.selectRolesByAccountId(id);
     }
 
     /**

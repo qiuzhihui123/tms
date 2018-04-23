@@ -26,6 +26,7 @@
     </dependencies>
 
     <build>
+
         <plugins>
             <!--编译插件-->
             <plugin>

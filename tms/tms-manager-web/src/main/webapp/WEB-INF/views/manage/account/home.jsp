@@ -25,7 +25,7 @@
     <!-- =============================================== -->
 
     <jsp:include page="../../include/sider.jsp">
-        <jsp:param name="menu" value="manage_roles"/>
+        <jsp:param name="menu" value="manage_account"/>
     </jsp:include>
 
     <!-- =============================================== -->
@@ -43,9 +43,11 @@
         <section class="content">
             <div class="box">
                 <div class="box-header">
-                    <h3 class="box-title">帐号列表</h3>
+                    <h3 class="box-title">帐号列表</h3> <c:if test="${not empty message}"><span class="alert alert-success" style="margin-left: 80px;color: red;text-align: center">${message} </span></c:if>
                     <div class="box-tools">
-                        <a href="/manage/account/new" class="btn btn-success btn-sm"><i class="fa fa-plus"></i> 新增帐号</a>
+                        <shiro:hasPermission name="account:add">
+                            <a href="/manage/account/new" class="btn btn-success btn-sm"><i class="fa fa-plus"></i> 新增帐号</a>
+                        </shiro:hasPermission>
                     </div>
                 </div>
                 <div class="box-body">
@@ -71,7 +73,15 @@
                                 </td>
                                 <td>${account.accountStatus}</td>
                                 <td><fmt:formatDate value="${account.createTime}" pattern="yyyy年MM月dd日"/> </td>
-                                <td><span ><a title="编辑" href=""><i class="fa fa-edit" style="color: blueviolet"></i></a></span> &nbsp <span title="删除"><i class="fa fa-remove" style="color: red"></i></span></td>
+                                <td>
+                                    <shiro:hasPermission name="account:edit">
+                                        <span ><a title="编辑" href="/manage/account/${account.id}/edit"><i class="fa fa-edit" style="color: blueviolet"></i></a></span> &nbsp
+                                    </shiro:hasPermission>
+
+                                    <shiro:hasPermission name="account:del">
+                                        <span title="删除" rel="${account.id}" id="accountDel"><i class="fa fa-remove" style="color: red"></i></span>
+                                    </shiro:hasPermission>
+                                </td>
                             </tr>
 
                         </c:forEach>
@@ -113,13 +123,28 @@
 <!-- ./wrapper -->
 
 <%@include file="../../include/js.jsp"%>
-<script src="/static/plugins/treeGrid/js/jquery.treegrid.min.js"></script>
-<script src="/static/plugins/treeGrid/js/jquery.treegrid.bootstrap3.js"></script>
+<%--<script src="/static/plugins/treeGrid/js/jquery.treegrid.min.js"></script>
+<script src="/static/plugins/treeGrid/js/jquery.treegrid.bootstrap3.js"></script>--%>
 <script src="/static/plugins/layer/layer.js"></script>
 <script>
     $(function () {
 
+        $("#accountDel").click(function () {
+            var accountId = $(this).attr("rel");
+            layer.confirm("确定要删除吗",function () {
 
+                $.get("/manage/account/"+accountId+"/del").success(function (data) {
+                    if(data.status == 'success'){
+                        history.go(0);
+                    }else {
+                        layer.alert("服务器异常");
+                    }
+
+                }).error(function () {
+                    layer.alert("服务器异常");
+                }).complete();
+            });
+        });
 
 
 

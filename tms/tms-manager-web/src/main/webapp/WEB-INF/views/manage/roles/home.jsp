@@ -38,7 +38,9 @@
                 <div class="box-header">
                     <h3 class="box-title">角色列表</h3>
                     <div class="box-tools">
-                        <a href="/manage/roles/new" class="btn btn-success btn-sm"><i class="fa fa-plus"></i> 新增角色</a>
+                        <shiro:hasPermission name="roles:add">
+                            <a href="/manage/roles/new" class="btn btn-success btn-sm"><i class="fa fa-plus"></i> 新增角色</a>
+                        </shiro:hasPermission>
                     </div>
                 </div>
                 <div class="box-body">
@@ -49,8 +51,13 @@
                                 <td>
                                     角色名称：<strong>${roles.rolesName}</strong>
                                     <span class="pull-right">
-                                        <a style="color: #fff;" href="/manage/roles/${roles.id}/edit"><i class="fa fa-pencil"></i></a>
-                                        <a style="color: #fff;" class="delLink" rel="${roles.id}" href="javascript:;"><i class="fa fa-trash"></i></a>
+                                        <shiro:hasPermission name="roles:edit">
+                                            <a style="color: #fff;" href="/manage/roles/${roles.id}/edit"><i class="fa fa-pencil"></i></a>
+                                        </shiro:hasPermission>
+
+                                        <shiro:hasPermission name="roles:del">
+                                            <a style="color: #fff;" class="delLink" rel="${roles.id}" href="javascript:;"><i class="fa fa-trash"></i></a>
+                                        </shiro:hasPermission>
                                     </span>
                                 </td>
                             </tr>

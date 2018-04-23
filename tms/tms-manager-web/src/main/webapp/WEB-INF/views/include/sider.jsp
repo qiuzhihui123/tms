@@ -3,6 +3,7 @@
 
 <%@ taglib prefix="c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri = "http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 
 <!-- 左侧菜单栏 -->
 <aside class="main-sidebar">
@@ -23,13 +24,33 @@
         <!-- 菜单 -->
         <ul class="sidebar-menu">
             <li class="${param.menu == 'home' ? 'active' : ''}"><a href="/home"><i class="fa fa-home"></i> <span>首页</span></a></li>
+
+            <%--基本信息管理--%>
+            <li class="header">基本信息管理</li>
+                    <%--售票点信息管理--%>
+            <shiro:hasPermission name="office:query">
+                <li class="${param.menu == 'base_office' ? 'active' : '' }"><a href="/base/office"><i class="fa fa-circle-o "></i> 售票点信息</a></li>
+            </shiro:hasPermission>
+
+
+
             <li class="header">系统管理</li>
             <!-- 客户管理 -->
+            <shiro:hasPermission name="account:query">
+                 <li class="${param.menu == 'manage_account' ? 'active' : '' }"><a href="/manage/account"><i class="fa fa-circle-o "></i> 帐号管理</a></li>
+            </shiro:hasPermission>
 
-                    <li class="${param.menu == 'customersmy' ? 'active' : '' }"><a href="/manage/account"><i class="fa fa-circle-o "></i> 帐号管理</a></li>
-                    <li class="${param.menu == 'customerspub' ? 'active' : '' }"><a href="/manage/roles"><i class="fa fa-circle-o "></i> 角色管理</a></li>
+            <shiro:hasPermission name="roles:query">
+                    <li class="${param.menu == 'manage_roles' ? 'active' : '' }"><a href="/manage/roles"><i class="fa fa-circle-o "></i> 角色管理</a></li>
+
+            </shiro:hasPermission>
+
+            <shiro:hasPermission name="permission:query">
                     <li class="${param.menu == 'manage_permission' ? 'active' : '' }"><a href="/manage/permission"><i class="fa fa-circle-o "></i> 权限管理</a></li>
-                </ul>
+            </shiro:hasPermission>
+
+
+        </ul>
 
        <%--     <!-- 工作记录 -->
             <li class="treeview ${fn:startsWith(param.menu,'work_record_') ? 'active' : ''}">

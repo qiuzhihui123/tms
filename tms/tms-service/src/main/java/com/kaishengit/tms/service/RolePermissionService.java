@@ -1,7 +1,7 @@
 package com.kaishengit.tms.service;
 
-import com.kaishengit.tms.entity.Permission;
-import com.kaishengit.tms.entity.Roles;
+import com.kaishengit.tms.entity.manage.Permission;
+import com.kaishengit.tms.entity.manage.Roles;
 
 import java.util.List;
 
@@ -61,7 +61,7 @@ public interface RolePermissionService {
     void saveRoles(Roles roles, Integer[] permissionId);
 
     /** 
-     *描述:根据id查找角色
+     *描述:根据角色id查找角色
      *@参数:[id]
      *@返回值com.kaishengit.tms.entity.Roles
      */
@@ -87,4 +87,11 @@ public interface RolePermissionService {
      *@返回值void
      */
     void delPermissionById(Integer id);
+
+    /**
+     *@描述:根据account的id去查找该账户所具有的角色
+     *@参数:[id] 当前account的id
+     *@返回值java.util.List<com.kaishengit.tms.entity.Roles> roles的List集合
+     */
+    List<Roles> findAccountRolesByAccountId(Integer id);
 }

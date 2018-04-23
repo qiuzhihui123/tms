@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>TMS - 系统管理 - 新增角色</title>
+    <title>TMS - 系统管理 - 新增帐号</title>
     <%@include file="../../include/css.jsp"%>
     <link rel="stylesheet" href="/static/plugins/treeGrid/css/jquery.treegrid.css">
     <!-- iCheck -->
@@ -122,6 +122,7 @@
 <script>
     $(function () {
         $("#saveBtn").click(function () {
+
             $("#saveForm").submit();
         });
 
