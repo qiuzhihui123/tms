@@ -6,8 +6,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>TMS - 系统管理 - 角色管理</title>
-    <%@include file="../../../include/css.jsp"%>
+    <title>TMS - 系统管理 - 下发收费</title>
+    <%@include file="../../include/css.jsp"%>
     <link rel="stylesheet" href="/static/plugins/treeGrid/css/jquery.treegrid.css">
     <style>
         .fa{
@@ -20,12 +20,12 @@
 <!-- Site wrapper -->
 <div class="wrapper">
 
-    <%@include file="../../../include/header.jsp"%>
+    <%@include file="../../include/header.jsp"%>
 
     <!-- =============================================== -->
 
-    <jsp:include page="../../../include/sider.jsp">
-        <jsp:param name="menu" value="ticket_out"/>
+    <jsp:include page="../../include/sider.jsp">
+        <jsp:param name="menu" value="finance_office"/>
     </jsp:include>
 
     <!-- =============================================== -->
@@ -35,7 +35,7 @@
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
-                年票下发
+                销售点缴费
             </h1>
         </section>
 
@@ -43,16 +43,26 @@
         <section class="content">
             <div class="box">
                 <div class="box-header">
-                    <h3 class="box-title">下发记录</h3> <c:if test="${not empty message}"><span class="label label-success" style="margin-left: 80px;color: red;text-align: center">${message} </span></c:if>
+                    <h3 class="box-title">缴费记录</h3> <c:if test="${not empty message}"><span class="label label-success" style="margin-left: 80px;color: red;text-align: center">${message} </span></c:if>
 
                     <div class="box-tools">
-                        <shiro:hasPermission name="account:add">
-                            <a href="/ticket/repository/out/new" class="btn btn-success btn-sm"><i class="fa fa-plus"></i> 新增下发</a>
-                        </shiro:hasPermission>
+
                     </div>
                     <c:if test="${not empty errorMessage}"><span class="label label-danger" style="margin-left: 80px;color: red;text-align: center">${errorMessage}</c:if>
                 </div>
+
+
                 <div class="box-body">
+
+                    <form id="serachForm"class="form-inline">
+                        <select name="status" id="serach" class="form-control">
+                            <option ${param.status == '全部订单' ? 'selected': ''}>全部订单</option>
+                            <option value="已支付" ${param.status == '已支付' ? 'selected': ''}>已支付</option>
+                            <option value="未支付" ${param.status == '未支付' ? 'selected': ''}>未支付</option>
+                        </select>
+
+                        <button class="btn btn-default">搜索</button>
+                    </form>
 
                     <table class="table">
                         <tr>
@@ -92,11 +102,11 @@
                                         <span ><a title="编辑" href="/manage/account/${account.id}/edit"><i class="fa fa-edit" style="color: blueviolet"></i></a></span> &nbsp
                                     </shiro:hasPermission>--%>
 
-                                    <shiro:hasPermission name="account:del">
+
                                         <c:if test="${ticketOutRecord.status == '未支付'}">
-                                            <span title="删除" rel="${ticketOutRecord.id}" class="outRecordDel"><i class="fa fa-remove" style="color: red"></i></span>
+                                            <span title="支付" rel="${ticketOutRecord.id}" ><a href="/finance/office/${ticketOutRecord.id}/pay"><button style="background-color: #b9daff"><i class="fa fa-money" style="color: white">支付</i></button></a></span>
                                         </c:if>
-                                    </shiro:hasPermission>
+
                                 </td>
                             </tr>
 
@@ -139,7 +149,7 @@
 </div>
 <!-- ./wrapper -->
 
-<%@include file="../../../include/js.jsp"%>
+<%@include file="../../include/js.jsp"%>
 <script src="/static/plugins/jquery/jquery.twbsPagination.min.js"></script>
 <%--<script src="/static/plugins/treeGrid/js/jquery.treegrid.min.js"></script>
 <script src="/static/plugins/treeGrid/js/jquery.treegrid.bootstrap3.js"></script>--%>
@@ -157,7 +167,12 @@
             href:"?p={{number}}"
         });
 
-        $(".outRecordDel").click(function () {
+        $("#serach").change(function () {
+            $("#serachForm").submit();
+        });
+
+
+        /*$(".outRecordDel").click(function () {
             var outRecordId = $(this).attr("rel");
             layer.confirm("确定要删除吗",function () {
                 $.get("/ticket/repository/out/"+outRecordId+"/del").success(function (data) {
@@ -175,7 +190,7 @@
                 });
             });
 
-        });
+        });*/
 
        /* $("#accountDel").click(function () {
             var accountId = $(this).attr("rel");

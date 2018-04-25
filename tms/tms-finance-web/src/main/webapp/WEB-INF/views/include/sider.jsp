@@ -30,10 +30,17 @@
             <li class="${param.menu == 'ticket_in' ? 'active' : '' }"><a href="/ticket/repository/in"><i class="fa fa-circle-o "></i> 年票入库</a></li>
             <li class="${param.menu == 'ticket_out' ? 'active' : '' }"><a href="/ticket/repository/out"><i class="fa fa-circle-o "></i> 年票下发</a></li>
             <li class="${param.menu == 'ticket_cancel' ? 'active' : '' }"><a href="/ticket/repository/cancle"><i class="fa fa-circle-o "></i> 年票作废</a></li>
+            <li class="${param.menu == 'ticket_chart' ? 'active' : '' }"><a href="/ticket/repository/chart"><i class="fa fa-circle-o "></i> 盘点统计</a></li>
         <%--售票点信息管理--%>
            <%-- <shiro:hasPermission name="office:query">
                 <li class="${param.menu == 'base_office' ? 'active' : '' }"><a href="/base/office"><i class="fa fa-circle-o "></i> 售票点信息</a></li>
             </shiro:hasPermission>--%>
+
+            <li class="header">财务管理</li>
+            <li class="${param.menu == 'finance_office' ? 'active' : '' }"><a href="/finance/office"><i class="fa fa-circle-o "></i> 售票点缴费</a></li>
+            <li class="${param.menu == 'ticket_in' ? 'active' : '' }"><a href=""><i class="fa fa-circle-o "></i> 景区结算</a></li>
+            <li class="${param.menu == 'ticket_in' ? 'active' : '' }"><a href=""><i class="fa fa-circle-o "></i> 销售统计</a></li>
+            <li class="${param.menu == 'ticket_in' ? 'active' : '' }"><a href=""><i class="fa fa-circle-o "></i> 验票系统</a></li>
 
 
 

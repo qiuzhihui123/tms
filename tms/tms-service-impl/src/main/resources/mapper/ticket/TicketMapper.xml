@@ -114,7 +114,15 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.kaishengit.tms.entity.ticket.Ticket">
+    <delete id="batchDeleteByIdList">
+
+        delete from ticket where id in
+        <foreach collection="list" item="ticketId" open="(" close=")" separator=",">
+            #{ticketId}
+        </foreach>
+
+    </delete>
+    <insert id="insert" parameterType="com.kaishengit.tms.entity.ticket.Ticket">
     insert into ticket (ticket_num, ticket_in_time, ticket_out_time,
       status, create_time, update_time, 
       office_id, open_card_time, invalidate_time, 
@@ -209,17 +217,28 @@
     </if>
   </select>
 
-    <select id="findOutRecordBetweenStartAndEndNum"
-            resultType="com.kaishengit.tms.entity.ticket.TicketOutRecord">
-        select * from ticket
-        where ticket_num >= convert(#{start},unsigned int)
-        and ticket_num &lt;= convert(#{end},unsigned int)
-        and status != #{status}
-    </select>
+
     <select id="findMaxNumInTicket" resultType="java.lang.Integer">
          select max(convert(ticket_num,unsigned int)) m from ticket
 
     </select>
+
+    <select id="selectTicketsByStartAndEndNum" resultType="com.kaishengit.tms.entity.ticket.Ticket">
+        select * from ticket where ticket_num >= convert(#{start},unsigned int)
+                                and ticket_num &lt;= convert(#{end},unsigned int)
+                                and status = #{status}
+    </select>
+
+    <select id="countByStatus" resultType="java.util.Map">
+        select count(*) as total_num,
+        count(case when status = '已入库' then 1 end) as in_num,
+        count(case when status = '已入库' then 1 end) as out_num,
+        count(case when status = '已销售' then 1 end) as saled_num,
+        count(case when status = '已挂失' then 1 end) as lost_num,
+        count(case when status = '已过期' then 1 end ) as past_num
+        from ticket
+    </select>
+
 
 
     <update id="updateByExampleSelective" parameterType="map">

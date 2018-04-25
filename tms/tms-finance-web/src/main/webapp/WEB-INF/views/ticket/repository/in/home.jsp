@@ -74,12 +74,9 @@
                                 <td>${ticketInRecord.accountName}</td>
 
                                 <td>
-                                    <shiro:hasPermission name="inRecord:edit">
-                                        <span ><a title="编辑" href="/manage/account/${account.id}/edit"><i class="fa fa-edit" style="color: blueviolet"></i></a></span> &nbsp
-                                    </shiro:hasPermission>
+                                    <span title="删除" rel="${ticketInRecord.id}" class="inRecordDel"><i class="fa fa-remove" style="color: red"></i></span>
 
                                     <shiro:hasPermission name="inRecord:del">
-                                        <span title="删除" rel="${account.id}" class="inRecordDel"><i class="fa fa-remove" style="color: red"></i></span>
                                     </shiro:hasPermission>
                                 </td>
                             </tr>
@@ -129,15 +126,17 @@
 <script>
     $(function () {
 
-        $("").click(function () {
-            var accountId = $(this).attr("rel");
+        $(".inRecordDel").click(function () {
+            var inRecordId = $(this).attr("rel");
             layer.confirm("确定要删除吗",function () {
 
-                $.get("/manage/account/"+accountId+"/del").success(function (data) {
+                $.get("/ticket/repository/in/"+inRecordId+"/del").success(function (data) {
                     if(data.status == 'success'){
+                        layer.msg("删除成功");
                         history.go(0);
-                    }else {
-                        layer.alert("服务器异常");
+                    }
+                    if(data.status == 'error'){
+                        layer.msg(data.message);
                     }
 
                 }).error(function () {

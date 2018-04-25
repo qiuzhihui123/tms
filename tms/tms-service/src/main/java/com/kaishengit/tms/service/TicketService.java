@@ -4,6 +4,9 @@ import com.github.pagehelper.PageInfo;
 import com.kaishengit.tms.entity.ticket.Ticket;
 import com.kaishengit.tms.entity.ticket.TicketInRecord;
 import com.kaishengit.tms.entity.ticket.TicketOutRecord;
+import com.kaishengit.tms.exception.ServiceException;
+
+import java.util.Map;
 
 /**
  *@Description: 处理ticket业务相关的service接口
@@ -32,7 +35,7 @@ public interface TicketService {
      *@参数:[p] 当前页码默认为1
      *@返回值com.github.pagehelper.PageInfo<com.kaishengit.tms.entity.ticket.TicketOutRecord>
      */
-    PageInfo<TicketOutRecord> findAllTicketOutRecordByPage(Integer p);
+    PageInfo<TicketOutRecord> findAllTicketOutRecordByPage(Integer p,String status);
     
     /** 
      *@描述:新增下发记录
@@ -40,4 +43,39 @@ public interface TicketService {
      *@返回值void
      */
     void ticketOutRecordNew(TicketOutRecord ticketOutRecord);
+
+    /**
+     *@描述: 根据入库id删除相应的入库记录
+     *@参数:[id]
+     *@返回值void
+     */
+    void inRecordDelByRecordID (Integer id)throws ServiceException;
+
+    /** 
+     *@描述:根据id删除相应的下发记录
+     *@参数:[id]
+     *@返回值void
+     */
+    void outRecordDelById(Integer id);
+
+    /** 
+     *@描述:查出盘点统计需要数据，如总数数量，已入库数量，已下发数量等
+     *@参数:[]
+     *@返回值java.util.Map<java.lang.String,java.lang.String>
+     */
+    Map<String,Long> findChartsOfTicket();
+
+    /**
+     *@描述:根据id查询出对应的下发记录
+     *@参数:[id]
+     *@返回值com.kaishengit.tms.entity.ticket.TicketOutRecord
+     */
+    TicketOutRecord findTIcketOutRecordById(Integer id);
+
+    /** 
+     *@描述:修改下发记录为已支付，并修改关联的数据
+     *@参数:[ticketOutRecord]
+     *@返回值void
+     */
+    void ticketInByRecordPaid(TicketOutRecord ticketOutRecord);
 }

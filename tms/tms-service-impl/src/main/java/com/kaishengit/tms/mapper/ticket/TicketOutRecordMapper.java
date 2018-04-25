@@ -27,4 +27,12 @@ public interface TicketOutRecordMapper {
     int updateByPrimaryKeySelective(TicketOutRecord record);
 
     int updateByPrimaryKey(TicketOutRecord record);
+
+    /**
+     *@描述:根据起始票号查询有没有状态不是已入库的年票
+     *@参数:[startTicketNum, endTicketNum, ticketStateInStore]
+     *@返回值java.util.List<com.kaishengit.tms.entity.ticket.TicketOutRecord>
+     */
+    List<TicketOutRecord> findOutRecordBetweenStartAndEndNum(@Param("start") String startTicketNum, @Param("end") String endTicketNum, @Param("status") String ticketStateInStore);
+
 }

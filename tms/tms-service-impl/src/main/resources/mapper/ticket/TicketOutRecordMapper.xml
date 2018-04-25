@@ -246,7 +246,14 @@
       <include refid="Example_Where_Clause" />
     </if>
   </select>
-  <update id="updateByExampleSelective" parameterType="map">
+    <select id="findOutRecordBetweenStartAndEndNum"
+            resultType="com.kaishengit.tms.entity.ticket.TicketOutRecord">
+        select * from ticket
+        where ticket_num >= convert(#{start},unsigned int)
+        and ticket_num &lt;= convert(#{end},unsigned int)
+        and status != #{status}
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
     update ticket_out_record
     <set>
       <if test="record.id != null">

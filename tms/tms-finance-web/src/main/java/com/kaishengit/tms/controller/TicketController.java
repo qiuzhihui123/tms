@@ -15,8 +15,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Date;
+
 import java.util.List;
+import java.util.Map;
 
 /**
  *@Description: 年票的库存管理，财务结算
@@ -69,12 +70,29 @@ public class TicketController {
         try {
             ticketService.ticketInByRecord(ticketInRecord);
         }catch (ServiceException e){
-            e.printStackTrace();
+
             redirectAttributes.addFlashAttribute("message",e.getMessage());
             return "redirect:/ticket/repository/in";
         }
         redirectAttributes.addFlashAttribute("message","保存成功");
         return "redirect:/ticket/repository/in";
+    }
+
+    /**
+     *@描述 接收前端的ajax请求并根据入库记录的id删除相应的入库记录并返回json结果
+     *@参数:[id] 入库记录的id
+     *@返回值com.kaishengit.tms.dto.ResultHandler 处理json数据的类
+     */
+    @GetMapping("/repository/in/{id:\\d+}/del")
+    public @ResponseBody ResultHandler inRecordDel(@PathVariable Integer id){
+        try{
+            ticketService.inRecordDelByRecordID(id);
+        }catch (ServiceException e){
+            e.printStackTrace();
+            return ResultHandler.error(e.getMessage());
+        }
+
+        return ResultHandler.success();
     }
 
     /**
@@ -85,7 +103,7 @@ public class TicketController {
     @GetMapping("/repository/out")
     public String ticketOutHome(@RequestParam(required = false,defaultValue = "1") Integer p,Model model){
 
-        PageInfo<TicketOutRecord> pageInfo = ticketService.findAllTicketOutRecordByPage(p);
+        PageInfo<TicketOutRecord> pageInfo = ticketService.findAllTicketOutRecordByPage(p,null);
         model.addAttribute("pageInfo",pageInfo);
         return "ticket/repository/out/home";
     }
@@ -126,13 +144,41 @@ public class TicketController {
         return"redirect:/ticket/repository/out";
     }
 
+    /**
+     *@描述:根据id删除相应的下发记录
+     *@参数:[id]
+     *@返回值com.kaishengit.tms.dto.ResultHandler
+     */
     @GetMapping("/repository/out/{id:\\d+}/del")
     public @ResponseBody
     ResultHandler outRecordDel(@PathVariable Integer id){
 
-
+        ticketService.outRecordDelById(id);
         return  ResultHandler.success();
     }
 
+    /** 
+     *@描述:查找对应的数据做各个状态年票的现量统计
+     *@参数:[model]
+     *@返回值java.lang.String
+     */
+    @GetMapping("/repository/chart")
+    public String chartCount(Model model){
+        return "ticket/repository/chart/home";
+    }
+
+
+
+    /**
+     *@描述:接收ajax请求并查处盘点统计需要的数据返回前端
+     *@参数:[]
+     *@返回值com.kaishengit.tms.dto.ResultHandler
+     */
+    @GetMapping("/repository/chart.json")
+    public @ResponseBody ResultHandler chartJson(){
+        Map<String,Long> map = ticketService.findChartsOfTicket();
+
+        return ResultHandler.success(map);
+    }
 
 }

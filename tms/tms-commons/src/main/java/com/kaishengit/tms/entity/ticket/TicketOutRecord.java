@@ -14,6 +14,8 @@ public class TicketOutRecord implements Serializable {
 
     public static final String HAVE_PAID_STATUS="已支付";
 
+
+
     //单页显示的条数
     public static final Integer PAGE_SIZE = 15;
 
