@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.Transaction;
 import redis.clients.jedis.Tuple;
 
 import java.util.HashMap;
@@ -115,6 +116,27 @@ public class RedisTest {
         char ch = 116;
         System.out.println(ch);
      jedis.close();
+    }
+    @Test
+    public void multi(){
+
+        GenericObjectPoolConfig genericObjectPoolConfig = new GenericObjectPoolConfig();
+
+        genericObjectPoolConfig.setMaxTotal(10);
+        genericObjectPoolConfig.setMinIdle(4);
+
+        JedisPool jedisPool = new JedisPool(genericObjectPoolConfig,host,port);
+        Jedis jedis = jedisPool.getResource();
+
+        Transaction transaction = jedis.multi();
+
+        transaction.set();
+        transaction.hset();
+        transaction.lpush();
+        transaction.sadd();
+        transaction.zadd();
+        transaction.exec();
+
     }
 
 }
