@@ -267,6 +267,17 @@ public class RolePermissionServiceImpl implements RolePermissionService {
     }
 
     /**
+     * @描述:查找现存的所有角色列表
+     * @参数:[]
+     * @返回值java.util.List<com.kaishengit.tms.entity.manage.Roles>
+     */
+    @Override
+    public List<Roles> findAllRoles() {
+       RolesExample rolesExample = new RolesExample();
+       return rolesMapper.selectByExample(rolesExample);
+    }
+
+    /**
      *@描述: 根据数据库查出来的permission列表重新排序用于正确显示列表
      *@参数: [permissionList（查出来的所有permission）,
      *        appearList(重新排序后的permission列表),

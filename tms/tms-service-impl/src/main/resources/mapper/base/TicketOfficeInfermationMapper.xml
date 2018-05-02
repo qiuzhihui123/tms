@@ -255,6 +255,24 @@
     WHERE
         toi.id = #{id}
     </select>
+    <select id="findOfficesByParamsMap" resultType="com.kaishengit.tms.entity.base.TicketOfficeInfermation">
+
+        select * from ticket_office_infermation
+        <where>
+            <if test="officeName != null and officeName != ''">
+                office_name like concat('%',#{officeName},'%')
+            </if>
+
+            <if test="legalPersonName != null and legalPersonName != ''">
+              and legal_person_name like concat('%',#{legalPersonName},'%')
+            </if>
+
+            <if test="legalPersonMobile != null and legalPersonMobile != ''">
+              and legal_person_mobile like concat('%',#{legalPersonMobile},'%')
+            </if>
+        </where>
+
+    </select>
 
     <resultMap id="aOfficeWithAccount" type="TicketOfficeInfermation">
         <id column="id" property="id"/>

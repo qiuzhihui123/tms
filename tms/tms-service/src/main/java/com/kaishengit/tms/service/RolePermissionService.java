@@ -94,4 +94,11 @@ public interface RolePermissionService {
      *@返回值java.util.List<com.kaishengit.tms.entity.Roles> roles的List集合
      */
     List<Roles> findAccountRolesByAccountId(Integer id);
+
+    /** 
+     *@描述:查找现存的所有角色列表
+     *@参数:[]
+     *@返回值java.util.List<com.kaishengit.tms.entity.manage.Roles>
+     */
+    List<Roles> findAllRoles();
 }

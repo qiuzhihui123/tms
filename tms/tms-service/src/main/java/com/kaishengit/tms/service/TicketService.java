@@ -1,11 +1,15 @@
 package com.kaishengit.tms.service;
 
 import com.github.pagehelper.PageInfo;
+import com.kaishengit.tms.entity.base.Customer;
+import com.kaishengit.tms.entity.base.TicketOfficeInfermation;
+import com.kaishengit.tms.entity.manage.Account;
 import com.kaishengit.tms.entity.ticket.Ticket;
 import com.kaishengit.tms.entity.ticket.TicketInRecord;
 import com.kaishengit.tms.entity.ticket.TicketOutRecord;
 import com.kaishengit.tms.exception.ServiceException;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 /**
@@ -28,7 +32,7 @@ public interface TicketService {
      *@参数:[ticketInRecord]
      *@返回值void
      */
-    void ticketInByRecord(TicketInRecord ticketInRecord);
+    void ticketInByRecord(TicketInRecord ticketInRecord,Account account);
 
     /**
      *@描述:根据传来的页码查询相应的出库记录并封装到PageInfo对象中返回
@@ -42,7 +46,7 @@ public interface TicketService {
      *@参数:[ticketOutRecord]
      *@返回值void
      */
-    void ticketOutRecordNew(TicketOutRecord ticketOutRecord);
+    void ticketOutRecordNew(TicketOutRecord ticketOutRecord,Account account);
 
     /**
      *@描述: 根据入库id删除相应的入库记录
@@ -77,5 +81,26 @@ public interface TicketService {
      *@参数:[ticketOutRecord]
      *@返回值void
      */
-    void ticketInByRecordPaid(TicketOutRecord ticketOutRecord);
+    void ticketInByRecordPaid(TicketOutRecord ticketOutRecord,Account account);
+
+    /**
+     *@描述:根据销售点的id查询该售票点的销售信息封装成map返回
+     *@参数:[id]
+     *@返回值java.util.Map<java.lang.String,java.lang.Long>
+     */
+    Map<String,Long> findChartsOfTicketOfOneOfficeByOfficeId(Integer id);
+
+    /** 
+     *@描述:保存开卡记录
+     *@参数:[customer, ticketNum, ticketPrice, office]
+     *@返回值void
+     */
+    void saveCustomerWithTicket(Customer customer, String ticketNum, BigDecimal ticketPrice, TicketOfficeInfermation office) throws ServiceException;
+
+    /** 
+     *@描述:根据年票票号查找该年票
+     *@参数:[ticketNum]
+     *@返回值com.kaishengit.tms.entity.ticket.Ticket
+     */
+    Ticket findTicketByTicketNum(String ticketNum,TicketOfficeInfermation office) throws ServiceException;
 }

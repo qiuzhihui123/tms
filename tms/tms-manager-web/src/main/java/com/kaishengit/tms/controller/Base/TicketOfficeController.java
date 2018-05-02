@@ -1,18 +1,22 @@
 package com.kaishengit.tms.controller.Base;
 
 
+import com.github.pagehelper.PageInfo;
+import com.kaishengit.tms.util.QiNiuCloudTokenUtil;
 import com.kaishengit.tms.dto.ResultHandler;
 import com.kaishengit.tms.entity.base.TicketOfficeInfermation;
 import com.kaishengit.tms.exception.ServiceException;
 import com.kaishengit.tms.service.TicketOfficeService;
-import com.kaishengit.tms.util.QiNiuCloudTokenUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -36,11 +40,20 @@ public class TicketOfficeController {
      *@返回值java.lang.String
      */
     @GetMapping
-    public  String home(Model model){
+    public  String home(@RequestParam(required = false)String officeName,
+                        @RequestParam(required = false) String legalPersonName,
+                        @RequestParam(required = false) String legalPersonMobile,
+                        @RequestParam(required = false,defaultValue = "1")Integer p,
+                        Model model){
 
-        List<TicketOfficeInfermation> officeList = ticketOfficeService.findAllTicketOffices();
+       // List<TicketOfficeInfermation> officeList = ticketOfficeService.findAllTicketOffices();
+        Map<String,Object> paramMap = new HashMap<>();
+        paramMap.put("officeName",officeName);
+        paramMap.put("legalPersonName",legalPersonName);
+        paramMap.put("legalPersonMobile",legalPersonMobile);
 
-        model.addAttribute("officeList",officeList);
+        PageInfo<TicketOfficeInfermation> pageInfo = ticketOfficeService.findOfficesByParamsMap(p,paramMap);
+        model.addAttribute("pageInfo",pageInfo);
         return "base/office/home";
     }
 

@@ -188,11 +188,62 @@
         order by account.id desc
 
     </select>
+    <!-- ============= -->
+    <select id="findAccountWithRolesByParams" resultMap="findAccountWithRolesByParams">
+       SELECT
+        account.*, roles.id AS rolesId,
+        roles.roles_code,
+        roles.roles_name,
+        roles.create_time AS rolesCreateTime,
+        roles.update_time AS rolesUpdateTime
+        FROM
+        account
+        LEFT JOIN account_roles ON account.id = account_roles.account_id
+        LEFT JOIN roles ON roles.id = account_roles.roles_id
+        <choose>
+            <when test="roleId != null and roleId != 0">
+                inner join (select id from account inner join account_roles on account_roles.account_id = account.id
+                <where>account_roles.roles_id = #{roleId}
+                    <if test="nameMobile != null and nameMobile != ''">
+                        and (account.account_name like concat('%',#{nameMobile},'%'))
+                        or (account.account_mobile like concat('%',#{nameMobile},'%'))
+                    </if>
+                </where>
+                ) temp on temp.id = account.id
+            </when>
+            <otherwise>
+                <where>
+                    <if test="nameMobile != null and nameMobile != ''">
+                        (account.account_name like concat('%',#{nameMobile},'%'))
+                        or
+                        (account.account_mobile like concat('%',#{nameMobile},'%'))
+                    </if>
+                </where>
+
+            </otherwise>
+        </choose>
+
+
+        order by account.id desc
+
+    </select>
+
+    <resultMap id="findAccountWithRolesByParams" type="Account" extends="BaseAccountWithRolesMap">
+        <collection property="rolesList" ofType="Roles">
+            <id column="roles_id" property="id"/>
+            <result column="roles_name" property="rolesName"/>
+        </collection>
+    </resultMap>
+
+    <!-- ============= -->
+
 
     <resultMap id="BaseAccountWithRolesMap" type="com.kaishengit.tms.entity.manage.Account">
         <id column="id" jdbcType="INTEGER" property="id" />
         <result column="account_name" jdbcType="VARCHAR" property="accountName" />
         <result column="account_mobile" jdbcType="VARCHAR" property="accountMobile" />
+        <result column="account_status" property="accountStatus"/>
+        <result column="create_time" property="createTime"/>
 
     </resultMap>
     

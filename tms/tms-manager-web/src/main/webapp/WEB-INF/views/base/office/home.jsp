@@ -41,6 +41,18 @@
 
         <!-- Main content -->
         <section class="content">
+
+            <div class="box">
+                <div class="box-body">
+                    <form method="get" class="form-inline">
+                        <input type="text" name="officeName" class="form-control" placeholder="售票点名称" value="${param.officeName}">
+                        <input type="text" name="legalPersonName" class="form-control" placeholder="联系人" value="${param.legalPersonName}">
+                        <input type="text" name="legalPersonMobile" class="form-control" placeholder="联系电话" value="${param.legalPersonMobile}">
+                        <button class="btn btn-default">搜索</button>
+                    </form>
+                </div>
+            </div>
+
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">售票点列表</h3> <c:if test="${not empty message}"><span class="alert alert-dangerous" style="padding-left: 80px;color: red">${message} </span></c:if>
@@ -62,7 +74,7 @@
                             <th>#</th>
                         </tr>
 
-                        <c:forEach items="${officeList}" var="office">
+                        <c:forEach items="${pageInfo.list}" var="office">
                             <tr>
                                 <td><a href="/base/office/${office.id}/detail">${office.officeName}</a></td>
                                 <td>${office.legalPersonName}</td>
@@ -82,6 +94,10 @@
                         </c:forEach>
                     </table>
 
+                    <c:if test="${pageInfo.pages > 1}">
+                        <ul id="pagination-demo" class="pagination pull-right"></ul>
+                    </c:if>
+
                 </div>
             </div>
         </section>
@@ -92,12 +108,25 @@
 <!-- ./wrapper -->
 
 <%@include file="../../include/js.jsp"%>
-<script src="/static/plugins/treeGrid/js/jquery.treegrid.min.js"></script>
-<script src="/static/plugins/treeGrid/js/jquery.treegrid.bootstrap3.js"></script>
+<%--<script src="/static/plugins/treeGrid/js/jquery.treegrid.min.js"></script>
+<script src="/static/plugins/treeGrid/js/jquery.treegrid.bootstrap3.js"></script>--%>
 <script src="/static/plugins/layer/layer.js"></script>
+<script src="/static/plugins/jquery/jquery.twbsPagination.js"></script>
 <script>
     $(function () {
 
+        /*分页--------------------------------*/
+        $('#pagination-demo').twbsPagination({
+            totalPages:${pageInfo.pages},
+            visiblePages: 3,
+            first:'首页',
+            last:'末页',
+            prev:'上一页',
+            next:'下一页',
+            href:"?officeName="+encodeURIComponent('${param.nameMobile}')
+            +"&legalPersonName="+encodeURIComponent('${param.roleId}')
+            +"&legalPersonMobile="+encodeURIComponent('${param.legalPersonMobile}')+"&p={{number}}"
+        });
 
 
 

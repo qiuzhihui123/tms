@@ -144,7 +144,7 @@
 </div>
 
 <%@include file="../../include/js.jsp"%>
-<script src="/static/plugins/uploader/webuploader.min.js"></script>
+<script src="/static/plugins/uploaderbak/webuploader.min.js"></script>
 <script src="/static/plugins/layer/layer.js"></script>
 
 

@@ -1,4 +1,4 @@
-package com.kaishengit.tms.util;
+package com.kaishengit.tms.shiro;
 
 import com.kaishengit.tms.entity.manage.Account;
 import org.apache.shiro.SecurityUtils;

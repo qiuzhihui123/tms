@@ -13,7 +13,8 @@ public class Account implements Serializable {
     public static final String STATE_NORMAL = "正常";
     public static final String  STATE_LOCKED = "锁定";
     public static final String  STATE_FORBIDDEN="禁用";
-    public static final int  MOBILE_LAST_SIX_NUMBER = 6;
+    public static final Integer  MOBILE_LAST_SIX_NUMBER = 6;
+    public static final Integer PAGE_SIZE=5;
 
     public List<Roles> getRolesList() {
         return rolesList;

@@ -67,4 +67,12 @@ public interface TicketMapper {
     Map<String,Long> countByStatus();
 
 
+    /**
+     *@描述:根据销售点id查询该销售年票的统计
+     *@参数:[id]
+     *@返回值java.util.Map<java.lang.String,java.lang.Long>
+     */
+    Map<String,Long> findSaleCountByOfficeId(Integer id);
+
+
 }

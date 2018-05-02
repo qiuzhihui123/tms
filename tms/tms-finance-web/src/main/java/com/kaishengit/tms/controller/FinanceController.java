@@ -1,8 +1,10 @@
 package com.kaishengit.tms.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.kaishengit.tms.entity.manage.Account;
 import com.kaishengit.tms.entity.ticket.TicketOutRecord;
 import com.kaishengit.tms.service.TicketService;
+import com.kaishengit.tms.shiro.ShiroUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -57,7 +59,8 @@ public class FinanceController {
     @PostMapping("/office/{id:\\d+}/pay")
     public String officePaid(TicketOutRecord ticketOutRecord, RedirectAttributes redirectAttributes){
 
-        ticketService.ticketInByRecordPaid(ticketOutRecord);
+        Account account = ShiroUtil.getCurrentAccount();
+        ticketService.ticketInByRecordPaid(ticketOutRecord,account);
 
         redirectAttributes.addFlashAttribute("","");
         return "redirect:/finance/office";

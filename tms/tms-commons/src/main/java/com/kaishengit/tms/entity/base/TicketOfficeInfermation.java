@@ -12,6 +12,7 @@ public class TicketOfficeInfermation implements Serializable {
 
     public static final String OFFICE_NOMAL_STATUS="正常";
     public static final String OFFICE_FORBIDDEN_STATUS="禁用";
+    public  static final Integer PAGE_SIZE=5;
 
 
 

@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaishengit.tms.mapper.base.CustomerMapper">
+  <resultMap id="BaseResultMap" type="com.kaishengit.tms.entity.base.Customer">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="ticket_price" jdbcType="DECIMAL" property="ticketPrice" />
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+    <result column="identity_num" jdbcType="VARCHAR" property="identityNum" />
+    <result column="identity_up" jdbcType="VARCHAR" property="identityUp" />
+    <result column="identity_down" jdbcType="VARCHAR" property="identityDown" />
+    <result column="customer_photo" jdbcType="VARCHAR" property="customerPhoto" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="customer_mobile" jdbcType="VARCHAR" property="customerMobile" />
+    <result column="customer_address" jdbcType="VARCHAR" property="customerAddress" />
+    <result column="ticket_id" jdbcType="BIGINT" property="ticketId" />
+    <result column="customer_age" jdbcType="INTEGER" property="customerAge" />
+    <result column="customer_sex" jdbcType="VARCHAR" property="customerSex" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, ticket_price, customer_name, identity_num, identity_up, identity_down, customer_photo, 
+    create_time, update_time, customer_mobile, customer_address, ticket_id, customer_age, 
+    customer_sex
+  </sql>
+  <select id="selectByExample" parameterType="com.kaishengit.tms.entity.base.CustomerExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from customer
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="limit != null">
+      <if test="offset != null">
+        limit ${offset}, ${limit}
+      </if>
+      <if test="offset == null">
+        limit ${limit}
+      </if>
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from customer
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from customer
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.kaishengit.tms.entity.base.CustomerExample">
+    delete from customer
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.kaishengit.tms.entity.base.Customer">
+
+    insert into customer (ticket_price, customer_name, identity_num, 
+      identity_up, identity_down, customer_photo, 
+      create_time, update_time, customer_mobile, 
+      customer_address, ticket_id, customer_age, 
+      customer_sex)
+    values (#{ticketPrice,jdbcType=DECIMAL}, #{customerName,jdbcType=VARCHAR}, #{identityNum,jdbcType=VARCHAR}, 
+      #{identityUp,jdbcType=VARCHAR}, #{identityDown,jdbcType=VARCHAR}, #{customerPhoto,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{customerMobile,jdbcType=VARCHAR}, 
+      #{customerAddress,jdbcType=VARCHAR}, #{ticketId,jdbcType=BIGINT}, #{customerAge,jdbcType=INTEGER}, 
+      #{customerSex,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.kaishengit.tms.entity.base.Customer" useGeneratedKeys="true" keyProperty="id">
+
+    insert into customer
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="ticketPrice != null">
+        ticket_price,
+      </if>
+      <if test="customerName != null">
+        customer_name,
+      </if>
+      <if test="identityNum != null">
+        identity_num,
+      </if>
+      <if test="identityUp != null">
+        identity_up,
+      </if>
+      <if test="identityDown != null">
+        identity_down,
+      </if>
+      <if test="customerPhoto != null">
+        customer_photo,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="customerMobile != null">
+        customer_mobile,
+      </if>
+      <if test="customerAddress != null">
+        customer_address,
+      </if>
+      <if test="ticketId != null">
+        ticket_id,
+      </if>
+      <if test="customerAge != null">
+        customer_age,
+      </if>
+      <if test="customerSex != null">
+        customer_sex,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="ticketPrice != null">
+        #{ticketPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="customerName != null">
+        #{customerName,jdbcType=VARCHAR},
+      </if>
+      <if test="identityNum != null">
+        #{identityNum,jdbcType=VARCHAR},
+      </if>
+      <if test="identityUp != null">
+        #{identityUp,jdbcType=VARCHAR},
+      </if>
+      <if test="identityDown != null">
+        #{identityDown,jdbcType=VARCHAR},
+      </if>
+      <if test="customerPhoto != null">
+        #{customerPhoto,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="customerMobile != null">
+        #{customerMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="customerAddress != null">
+        #{customerAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="ticketId != null">
+        #{ticketId,jdbcType=BIGINT},
+      </if>
+      <if test="customerAge != null">
+        #{customerAge,jdbcType=INTEGER},
+      </if>
+      <if test="customerSex != null">
+        #{customerSex,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.kaishengit.tms.entity.base.CustomerExample" resultType="java.lang.Long">
+    select count(*) from customer
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update customer
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.ticketPrice != null">
+        ticket_price = #{record.ticketPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.customerName != null">
+        customer_name = #{record.customerName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.identityNum != null">
+        identity_num = #{record.identityNum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.identityUp != null">
+        identity_up = #{record.identityUp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.identityDown != null">
+        identity_down = #{record.identityDown,jdbcType=VARCHAR},
+      </if>
+      <if test="record.customerPhoto != null">
+        customer_photo = #{record.customerPhoto,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.customerMobile != null">
+        customer_mobile = #{record.customerMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="record.customerAddress != null">
+        customer_address = #{record.customerAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ticketId != null">
+        ticket_id = #{record.ticketId,jdbcType=BIGINT},
+      </if>
+      <if test="record.customerAge != null">
+        customer_age = #{record.customerAge,jdbcType=INTEGER},
+      </if>
+      <if test="record.customerSex != null">
+        customer_sex = #{record.customerSex,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update customer
+    set id = #{record.id,jdbcType=BIGINT},
+      ticket_price = #{record.ticketPrice,jdbcType=DECIMAL},
+      customer_name = #{record.customerName,jdbcType=VARCHAR},
+      identity_num = #{record.identityNum,jdbcType=VARCHAR},
+      identity_up = #{record.identityUp,jdbcType=VARCHAR},
+      identity_down = #{record.identityDown,jdbcType=VARCHAR},
+      customer_photo = #{record.customerPhoto,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      customer_mobile = #{record.customerMobile,jdbcType=VARCHAR},
+      customer_address = #{record.customerAddress,jdbcType=VARCHAR},
+      ticket_id = #{record.ticketId,jdbcType=BIGINT},
+      customer_age = #{record.customerAge,jdbcType=INTEGER},
+      customer_sex = #{record.customerSex,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.kaishengit.tms.entity.base.Customer">
+    update customer
+    <set>
+      <if test="ticketPrice != null">
+        ticket_price = #{ticketPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="customerName != null">
+        customer_name = #{customerName,jdbcType=VARCHAR},
+      </if>
+      <if test="identityNum != null">
+        identity_num = #{identityNum,jdbcType=VARCHAR},
+      </if>
+      <if test="identityUp != null">
+        identity_up = #{identityUp,jdbcType=VARCHAR},
+      </if>
+      <if test="identityDown != null">
+        identity_down = #{identityDown,jdbcType=VARCHAR},
+      </if>
+      <if test="customerPhoto != null">
+        customer_photo = #{customerPhoto,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="customerMobile != null">
+        customer_mobile = #{customerMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="customerAddress != null">
+        customer_address = #{customerAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="ticketId != null">
+        ticket_id = #{ticketId,jdbcType=BIGINT},
+      </if>
+      <if test="customerAge != null">
+        customer_age = #{customerAge,jdbcType=INTEGER},
+      </if>
+      <if test="customerSex != null">
+        customer_sex = #{customerSex,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.kaishengit.tms.entity.base.Customer">
+    update customer
+    set ticket_price = #{ticketPrice,jdbcType=DECIMAL},
+      customer_name = #{customerName,jdbcType=VARCHAR},
+      identity_num = #{identityNum,jdbcType=VARCHAR},
+      identity_up = #{identityUp,jdbcType=VARCHAR},
+      identity_down = #{identityDown,jdbcType=VARCHAR},
+      customer_photo = #{customerPhoto,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      customer_mobile = #{customerMobile,jdbcType=VARCHAR},
+      customer_address = #{customerAddress,jdbcType=VARCHAR},
+      ticket_id = #{ticketId,jdbcType=BIGINT},
+      customer_age = #{customerAge,jdbcType=INTEGER},
+      customer_sex = #{customerSex,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

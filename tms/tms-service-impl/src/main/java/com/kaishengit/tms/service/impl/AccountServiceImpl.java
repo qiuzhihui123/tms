@@ -1,5 +1,7 @@
 package com.kaishengit.tms.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.kaishengit.tms.entity.manage.*;
 import com.kaishengit.tms.exception.ServiceException;
 import com.kaishengit.tms.mapper.manage.AccountLoginLogMapper;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  *@Description: AccountService接口的实现类
@@ -213,6 +216,21 @@ public class AccountServiceImpl implements AccountService {
 
         logger.info("删除account,{}",account);
 
+    }
+
+    /**
+     * @param paramMap
+     * @描述:根据条件查询account并返回分页对象
+     * @参数:[paramMap] 查询条件封装的map集合
+     * @返回值com.github.pagehelper.PageInfo<com.kaishengit.tms.entity.manage.Account>
+     */
+    @Override
+    public PageInfo<Account> findAccountWithRolesByParams(Map<String, Object> paramMap,Integer p) {
+        PageHelper.startPage(p,Account.PAGE_SIZE);
+
+        List<Account> accountList = accountMapper.findAccountWithRolesByParams(paramMap);
+
+        return new PageInfo<Account>(accountList);
     }
 }
 

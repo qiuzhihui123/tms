@@ -51,6 +51,16 @@
                     </div>
                 </div>
                 <div class="box-body">
+                    <form >
+                        <input type="text" value="${param.nameMobile}"name="nameMobile"placeholder="请输入帐号名称或手机号">
+                        <select name="roleId" >
+                            <option value="">请选择角色</option>
+                            <c:forEach items="${rolesList}" var="role">
+                                <option value="${role.id}" ${param.roleId == role.id ? 'selected': ''}>${role.rolesName}</option>
+                            </c:forEach>
+                        </select>
+                        <button>搜索</button>
+                    </form>
 
                     <table class="table">
                         <tr>
@@ -62,7 +72,7 @@
                             <th>#</th>
                         </tr>
 
-                        <c:forEach items="${accountList}" var="account">
+                        <c:forEach items="${pageInfo.list}" var="account">
                             <tr>
                                 <td>${account.accountName}</td>
                                 <td>${account.accountMobile}</td>
@@ -88,7 +98,9 @@
 
 
                     </table>
-
+                    <c:if test="${pageInfo.pages > 1}">
+                        <ul id="pagination-demo" class="pagination pull-right"></ul>
+                    </c:if>
 
                     <%--<table class="table tree">
                         <tbody>
@@ -126,9 +138,24 @@
 <%--<script src="/static/plugins/treeGrid/js/jquery.treegrid.min.js"></script>
 <script src="/static/plugins/treeGrid/js/jquery.treegrid.bootstrap3.js"></script>--%>
 <script src="/static/plugins/layer/layer.js"></script>
+<script src="/static/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/jquery/jquery.twbsPagination.js"></script>
 <script>
     $(function () {
 
+        /*分页--------------------------------*/
+        $('#pagination-demo').twbsPagination({
+            totalPages:${pageInfo.pages},
+            visiblePages: 3,
+            first:'首页',
+            last:'末页',
+            prev:'上一页',
+            next:'下一页',
+            href:"?nameMobile="+encodeURIComponent('${param.nameMobile}')+"&roleId="+encodeURIComponent('${param.roleId}')+"&p={{number}}"
+        });
+
+
+/*删除------------------------------------*/
         $("#accountDel").click(function () {
             var accountId = $(this).attr("rel");
             layer.confirm("确定要删除吗",function () {

@@ -1,8 +1,12 @@
 package com.kaishengit.tms.service;
 
+import com.github.pagehelper.PageInfo;
+import com.kaishengit.tms.entity.base.TicketOfficeAccount;
 import com.kaishengit.tms.entity.base.TicketOfficeInfermation;
+import com.kaishengit.tms.entity.manage.Account;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *@Description:关于售票点的service接口
@@ -52,4 +56,26 @@ public interface TicketOfficeService {
      *@返回值void
      */
     void forbiddenOfficeAccountById(Integer id);
+
+    
+    /** 
+     *@描述:根据售票点电话找到对应的售票点信息
+     *@参数:[accountMobile]
+     *@返回值com.kaishengit.tms.entity.base.TicketOfficeInfermation
+     */
+    TicketOfficeInfermation findOfficeByAccountMobile(String accountMobile);
+
+    /**
+     *@描述:根据电话查找对应的销售点帐号
+     *@参数:[accountMobile]
+     *@返回值com.kaishengit.tms.entity.base.TicketOfficeAccount
+     */
+    TicketOfficeAccount findOfficeAccountByMobile(String accountMobile);
+
+    /** 
+     *@描述:根据页码和条件查询对应的销售点集合
+     *@参数:[p, paramMap]
+     *@返回值com.github.pagehelper.PageInfo<com.kaishengit.tms.entity.base.TicketOfficeInfermation>
+     */
+    PageInfo<TicketOfficeInfermation> findOfficesByParamsMap(Integer p, Map<String, Object> paramMap);
 }

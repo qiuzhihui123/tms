@@ -239,6 +239,15 @@
         from ticket
     </select>
 
+    <select id="findSaleCountByOfficeId" resultType="java.util.Map">
+        select count(*) total_num,
+            count(case when `status` = '已销售' then 1 end ) saled_num,
+            count(case when `status` = '已下发' then 1 end) out_num,
+            count(case when `status` = '已挂失' then 1 end) lost_num,
+            count(case when `status` = '已过期' then 1 end) past_num
+        from ticket where office_id = #{id}
+
+    </select>
 
 
     <update id="updateByExampleSelective" parameterType="map">

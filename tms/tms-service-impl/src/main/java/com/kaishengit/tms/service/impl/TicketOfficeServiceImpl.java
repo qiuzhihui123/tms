@@ -1,6 +1,8 @@
 package com.kaishengit.tms.service.impl;
 
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.kaishengit.tms.entity.base.TicketOfficeAccount;
 import com.kaishengit.tms.entity.base.TicketOfficeAccountExample;
 import com.kaishengit.tms.entity.base.TicketOfficeInfermation;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  *@Description:处理售票点先关service的实现类
@@ -163,6 +166,50 @@ public class TicketOfficeServiceImpl implements TicketOfficeService {
             logger.info("启用账户,{}",account);
         }
 
+    }
+
+    /**
+     * @param accountMobile
+     * @描述:根据售票点电话找到对应的售票点信息
+     * @参数:[accountMobile]
+     * @返回值com.kaishengit.tms.entity.base.TicketOfficeInfermation
+     */
+    @Override
+    public TicketOfficeInfermation findOfficeByAccountMobile(String accountMobile) {
+        TicketOfficeInfermationExample ticketOfficeInfermationExample = new TicketOfficeInfermationExample();
+        ticketOfficeInfermationExample.createCriteria().andLegalPersonMobileEqualTo(accountMobile);
+
+        return ticketOfficeInfermationMapper.selectByExample(ticketOfficeInfermationExample).get(0);
+
+    }
+
+    /**
+     * @param accountMobile
+     * @描述:根据电话查找对应的销售点帐号
+     * @参数:[accountMobile]
+     * @返回值com.kaishengit.tms.entity.base.TicketOfficeAccount
+     */
+    @Override
+    public TicketOfficeAccount findOfficeAccountByMobile(String accountMobile) {
+        TicketOfficeAccountExample ticketOfficeAccountExample = new TicketOfficeAccountExample();
+        ticketOfficeAccountExample.createCriteria().andTicketOfficeAccountNameEqualTo(accountMobile);
+        return ticketOfficeAccountMapper.selectByExample(ticketOfficeAccountExample).get(0);
+
+    }
+
+    /**
+     * @param p
+     * @param paramMap
+     * @描述:根据页码和条件查询对应的销售点集合
+     * @参数:[p, paramMap]
+     * @返回值com.github.pagehelper.PageInfo<com.kaishengit.tms.entity.base.TicketOfficeInfermation>
+     */
+    @Override
+    public PageInfo<TicketOfficeInfermation> findOfficesByParamsMap(Integer p, Map<String, Object> paramMap) {
+        PageHelper.startPage(p,TicketOfficeInfermation.PAGE_SIZE);
+        List<TicketOfficeInfermation> officeList = ticketOfficeInfermationMapper.findOfficesByParamsMap(paramMap);
+
+        return new PageInfo<TicketOfficeInfermation>(officeList);
     }
 
 

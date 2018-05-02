@@ -73,6 +73,7 @@
     id, permission_name, permission_code, permission_type, parent_id, create_time, update_time, 
     url
   </sql>
+
   <select id="selectByExample" parameterType="com.kaishengit.tms.entity.manage.PermissionExample" resultMap="BaseResultMap">
     select
     <if test="distinct">

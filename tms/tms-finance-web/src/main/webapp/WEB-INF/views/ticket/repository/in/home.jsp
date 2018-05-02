@@ -86,7 +86,9 @@
 
                     </table>
 
-
+                    <c:if test="${pageInfo.pages > 1}">
+                        <ul id="pagination-demo" class="pagination pull-right"></ul>
+                    </c:if>
                     <%--<table class="table tree">
                         <tbody>
                         <c:forEach items="${accountList}" var="account">
@@ -123,8 +125,20 @@
 <%--<script src="/static/plugins/treeGrid/js/jquery.treegrid.min.js"></script>
 <script src="/static/plugins/treeGrid/js/jquery.treegrid.bootstrap3.js"></script>--%>
 <script src="/static/plugins/layer/layer.js"></script>
+<script src="/static/plugins/jquery/jquery.twbsPagination.js"></script>
 <script>
     $(function () {
+
+        /*分页--------------------------------*/
+        $('#pagination-demo').twbsPagination({
+            totalPages:${pageInfo.pages},
+            visiblePages: 3,
+            first:'首页',
+            last:'末页',
+            prev:'上一页',
+            next:'下一页',
+            href:"?&p={{number}}"
+        });
 
         $(".inRecordDel").click(function () {
             var inRecordId = $(this).attr("rel");

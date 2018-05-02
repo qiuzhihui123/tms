@@ -1,23 +1,28 @@
 package com.kaishengit.tms.service.impl;
 
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.kaishengit.tms.entity.base.Customer;
+import com.kaishengit.tms.entity.base.CustomerExample;
 import com.kaishengit.tms.entity.base.TicketOfficeInfermation;
 import com.kaishengit.tms.entity.manage.Account;
 import com.kaishengit.tms.entity.ticket.*;
 import com.kaishengit.tms.exception.ServiceException;
+import com.kaishengit.tms.mapper.base.CustomerMapper;
 import com.kaishengit.tms.mapper.base.TicketOfficeInfermationMapper;
 import com.kaishengit.tms.mapper.ticket.TicketInRecordMapper;
 import com.kaishengit.tms.mapper.ticket.TicketMapper;
+import com.kaishengit.tms.mapper.ticket.TicketOrderMapper;
 import com.kaishengit.tms.mapper.ticket.TicketOutRecordMapper;
 import com.kaishengit.tms.service.TicketService;
-import com.kaishengit.tms.util.ShiroUtil;
 
 
+import com.kaishengit.tms.util.SnowFlake;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +42,12 @@ import java.util.Map;
 @Service
 public class TicketServiceImpl implements TicketService {
 
+    @Value("${snowFlake.dataCenterId}")
+    private Integer snowFlakeDataCenter;
+
+    @Value("${snowFlake.machineId}")
+    private Integer snowFlakeMachineId;
+
     @Autowired
     private TicketInRecordMapper ticketInRecordMapper;
     @Autowired
@@ -45,6 +56,10 @@ public class TicketServiceImpl implements TicketService {
     private TicketOutRecordMapper ticketOutRecordMapper;
     @Autowired
     private TicketOfficeInfermationMapper ticketOfficeInfermationMapper;
+    @Autowired
+    private CustomerMapper customerMapper;
+    @Autowired
+    private TicketOrderMapper ticketOrderMapper;
 
     private static Logger logger = LoggerFactory.getLogger(TicketServiceImpl.class);
 
@@ -71,7 +86,7 @@ public class TicketServiceImpl implements TicketService {
      * @返回值void
      */
     @Override
-    public void ticketInByRecord(TicketInRecord ticketInRecord) {
+    public void ticketInByRecord(TicketInRecord ticketInRecord,Account account) {
         BigInteger startNum = new BigInteger(ticketInRecord.getStartTicketNum());
         BigInteger endNum = new BigInteger(ticketInRecord.getEndTicketNum());
 
@@ -98,7 +113,7 @@ public class TicketServiceImpl implements TicketService {
         ticketInRecord.setTotalNum(total);
 
         //当前对象
-        Account account  = ShiroUtil.getCurrentAccount();
+        /*Account account  = ShiroUtil.getCurrentAccount();*/
         ticketInRecord.setAccountId(account.getId());
         ticketInRecord.setAccountName(account.getAccountName());
 
@@ -198,7 +213,7 @@ public class TicketServiceImpl implements TicketService {
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public void ticketInByRecordPaid(TicketOutRecord ticketOutRecord) {
+    public void ticketInByRecordPaid(TicketOutRecord ticketOutRecord,Account account) {
 
         TicketOutRecord outRecord = ticketOutRecordMapper.selectByPrimaryKey(ticketOutRecord.getId());
         if(outRecord != null && TicketOutRecord.NON_PAYMENT_STATUS.equals(outRecord.getStatus())){
@@ -207,7 +222,7 @@ public class TicketServiceImpl implements TicketService {
              outRecord.setPayType(ticketOutRecord.getPayType());
 
              //设置收款人
-            Account account = ShiroUtil.getCurrentAccount();
+            /*Account account = ShiroUtil.getCurrentAccount();*/
             outRecord.setFinanceAccountId(account.getId());
             outRecord.setFinanceAccountName(account.getAccountName());
 
@@ -229,6 +244,163 @@ public class TicketServiceImpl implements TicketService {
             outRecord.setUpdateTime(new Date());
             ticketOutRecordMapper.updateByPrimaryKeySelective(outRecord);
 
+        }
+
+    }
+
+    /**
+     * @param id
+     * @描述:根据销售点的id查询该售票点的销售信息封装成map返回
+     * @参数:[id]
+     * @返回值java.util.Map<java.lang.String,java.lang.Long>
+     */
+    @Override
+    public Map<String, Long> findChartsOfTicketOfOneOfficeByOfficeId(Integer id) {
+
+        return ticketMapper.findSaleCountByOfficeId(id);
+
+    }
+
+    /**
+     * @param customer
+     * @param ticketNum
+     * @param ticketPrice
+     * @param office
+     * @描述:保存开卡记录
+     * @参数:[customer, ticketNum, ticketPrice, office]
+     * @返回值void
+     */
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void saveCustomerWithTicket(Customer customer, String ticketNum, BigDecimal ticketPrice, TicketOfficeInfermation office) throws ServiceException{
+
+        //检查年票和关联的售票点相关，如果不符合条件抛出异常
+        Ticket ticket = checkTicketWithOffice(ticketNum,office);
+
+        //检查顾客信息是否满足开卡条件,并返回最终的Customer对象，如果该顾客存在数据库中，且没有绑定年票，使用数据库中的，如果不存在，创建新的
+        customer = checkCustomerInfermation(customer,ticket);
+
+        //将年票改为已销售
+        ticket.setStatus(Ticket.TICKET_STATE_SALE);
+
+        //设置有效期为一年
+        ticket.setOpenCardTime(new Date());
+        DateTime inValidateTime = DateTime.now().plusYears(1);
+        ticket.setInvalidateTime(inValidateTime.toDate());
+
+        ticket.setCustomerId(customer.getId().intValue());
+
+        //更新年票
+        ticket.setUpdateTime(new Date());
+        ticketMapper.updateByPrimaryKeySelective(ticket);
+
+        //创建销售订单
+        TicketOrder ticketOrder =  new TicketOrder();
+        ticketOrder.setCreateTime(new Date());
+        ticketOrder.setCustomerId(customer.getId());
+        ticketOrder.setOfficeId(office.getId().longValue());
+        ticketOrder.setTicketPrice(ticketPrice.longValue());
+        ticketOrder.setTicketId(ticket.getId());
+
+        ticketOrder.setOrderType(TicketOrder.ORDER_TYPE_NEW);
+        //生成流水号
+        SnowFlake snowFlake = new SnowFlake(snowFlakeDataCenter,snowFlakeMachineId);
+        ticketOrder.setTicketOrderNum(snowFlake.nextId() + "");
+
+        ticketOrderMapper.insertSelective(ticketOrder);
+
+        logger.info("新增开卡记录{}",ticketOrder);
+    }
+
+    /**
+     * @param ticketNum
+     * @描述:根据年票票号查找该年票
+     * @参数:[ticketNum]
+     * @返回值com.kaishengit.tms.entity.ticket.Ticket
+     */
+    @Override
+    public Ticket findTicketByTicketNum(String ticketNum,TicketOfficeInfermation office) throws ServiceException{
+        TicketExample ticketExample = new TicketExample();
+        ticketExample.createCriteria().andTicketNumEqualTo(ticketNum);
+        List<Ticket> ticketList = ticketMapper.selectByExample(ticketExample);
+
+
+
+
+        if(ticketList != null && !ticketList.isEmpty()){
+            Ticket ticket = ticketList.get(0);
+            if( !office.getId().equals(ticket.getOfficeId())){
+               throw  new ServiceException("该年票不属于该售票点");
+            }
+            return ticket;
+        }else {
+            throw new ServiceException("该年票不存在");
+        }
+    }
+
+    /**
+     *@描述: 检查顾客信息是否满足开卡条件,并返回最终的Customer对象，
+     *       如果该顾客存在数据库中，且没有绑定年票，使用数据库中的，
+     *       如果不存在，创建新的
+     *@参数:[]
+     *@返回值void
+     */
+    private Customer checkCustomerInfermation(Customer customer,Ticket ticket) throws ServiceException{
+
+        //一下为客户验证，判断是否办理过年票
+        CustomerExample customerExample = new CustomerExample();
+        customerExample.createCriteria().andIdentityNumEqualTo(customer.getIdentityNum());
+        List<Customer> customerList = customerMapper.selectByExample(customerExample);
+
+        if(customerList != null && !customerList.isEmpty()){
+            //查找当前存在客户绑定的年票
+            Customer cust = customerList.get(0);
+            Ticket existCustomerTicket = ticketMapper.selectByPrimaryKey(cust.getTicketId());
+            if(existCustomerTicket != null){
+                throw new ServiceException("该用户已拥有年票，不能重复办理");
+            }else {
+                customer = cust;
+                customer.setTicketId(ticket.getId());
+                customerMapper.updateByPrimaryKeySelective(customer);
+            }
+
+        }else {
+            customer.setTicketId(ticket.getId());
+            customer.setCreateTime(new Date());
+            customerMapper.insertSelective(customer);
+        }
+
+        return customer;
+
+    }
+
+    /**
+     *@描述:检查年票和关联的售票点相关，如果不符合条件抛出异常
+     *@参数:[ticketNum, office]
+     *@返回值void
+     */
+    private Ticket checkTicketWithOffice(String ticketNum, TicketOfficeInfermation office) throws ServiceException{
+        TicketExample ticketExample = new TicketExample();
+        ticketExample.createCriteria().andTicketNumEqualTo(ticketNum);
+        List<Ticket> ticketList = ticketMapper.selectByExample(ticketExample);
+
+        //一下为年票验证
+        if(ticketList != null && !ticketList.isEmpty()){
+            Ticket ticket = ticketList.get(0);
+            if(Ticket.TICKET_STATE_OUT_STORE.equals(ticket.getStatus())){
+                if(office.getId().equals(ticket.getOfficeId())){
+
+                    return ticket;
+                }else {
+                    throw new ServiceException("该年票不属于该售票点，请查证后再试");
+                }
+
+            }else {
+                throw new ServiceException("该年票状态异常，请查证后再试");
+            }
+
+        }else {
+            throw new ServiceException("该年票不存在，请核对后再试");
         }
 
     }
@@ -266,7 +438,7 @@ public class TicketServiceImpl implements TicketService {
      * @返回值void
      */
     @Override
-    public void ticketOutRecordNew(TicketOutRecord ticketOutRecord) throws ServiceException{
+    public void ticketOutRecordNew(TicketOutRecord ticketOutRecord,Account account) throws ServiceException{
 
         BigInteger startTicketNum = new BigInteger(ticketOutRecord.getStartTicketNum());
         BigInteger endTicketNum = new BigInteger(ticketOutRecord.getEndTicketNum());
@@ -298,9 +470,9 @@ public class TicketServiceImpl implements TicketService {
         ticketOutRecord.setCreateTime(new Date());
 
         //下发人，当前登录的帐号
-        Account acocunt = ShiroUtil.getCurrentAccount();
-        ticketOutRecord.setOutAccountName(acocunt.getAccountName());
-        ticketOutRecord.setOutAccountId(acocunt.getId());
+       /* Account acocunt = ShiroUtil.getCurrentAccount();*/
+        ticketOutRecord.setOutAccountName(account.getAccountName());
+        ticketOutRecord.setOutAccountId(account.getId());
 
 
         //总数量

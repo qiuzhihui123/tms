@@ -3,6 +3,7 @@ package com.kaishengit.tms.mapper.manage;
 import com.kaishengit.tms.entity.manage.Account;
 import com.kaishengit.tms.entity.manage.AccountExample;
 import java.util.List;
+import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 public interface AccountMapper {
@@ -31,4 +32,11 @@ public interface AccountMapper {
     List<Account> findAllAccountWithRoles();
 
     Account findAccountWithRoles(Integer id);
+
+    /**
+     *@描述:根据条件查询符合条件的account并带有roles集合
+     *@参数:[paramMap]
+     *@返回值java.util.List<com.kaishengit.tms.entity.manage.Account>
+     */
+    List<Account> findAccountWithRolesByParams(Map<String, Object> paramMap);
 }

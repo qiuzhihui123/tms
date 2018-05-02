@@ -1,5 +1,6 @@
 package com.kaishengit.tms.controller.manage;
 
+import com.github.pagehelper.PageInfo;
 import com.kaishengit.tms.dto.ResultHandler;
 import com.kaishengit.tms.entity.manage.Account;
 import com.kaishengit.tms.entity.manage.Roles;
@@ -13,11 +14,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/manage/account")
 public class AccountController {
+
 
     @Autowired
     private AccountService accountService;
@@ -26,16 +30,27 @@ public class AccountController {
     @Value("${salt}")
     private  String salt;
 
-    /**
-     *描述:查找所有帐号以及拥有的角色
-     *@参数:[]
-     *@返回值java.lang.String
-     */
+   /**
+    *@描述： 查询所有帐号以及所拥有的角色
+    *@参数:[nameMobile, roleId, model]
+    *@返回值java.lang.String
+    */
     @GetMapping
-    public String home(Model model){
-        List<Account> accountList =  accountService.findAllAccountsWithRoles();
-        model.addAttribute("accountList",accountList);
-        System.out.println(salt);
+    public String home(@RequestParam(required = false) String nameMobile,
+                       @RequestParam(required = false) Integer roleId,
+                       @RequestParam(required = false,defaultValue = "1")  Integer p,
+                       Model model){
+       // List<Account> accountList =  accountService.findAllAccountsWithRoles();
+
+        Map<String,Object>  paramMap = new HashMap<>();
+        paramMap.put("nameMobile",nameMobile);
+        paramMap.put("roleId",roleId);
+
+        PageInfo<Account> pageInfo = accountService.findAccountWithRolesByParams(paramMap,p);
+        List<Roles> rolesList = rolePermissionService.findAllRoles();
+        model.addAttribute("pageInfo",pageInfo);
+        model.addAttribute("rolesList",rolesList);
+
         return "manage/account/home";
     }
 

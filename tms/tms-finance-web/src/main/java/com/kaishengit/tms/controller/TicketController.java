@@ -3,11 +3,13 @@ package com.kaishengit.tms.controller;
 import com.github.pagehelper.PageInfo;
 import com.kaishengit.tms.dto.ResultHandler;
 import com.kaishengit.tms.entity.base.TicketOfficeInfermation;
+import com.kaishengit.tms.entity.manage.Account;
 import com.kaishengit.tms.entity.ticket.TicketInRecord;
 import com.kaishengit.tms.entity.ticket.TicketOutRecord;
 import com.kaishengit.tms.exception.ServiceException;
 import com.kaishengit.tms.service.TicketOfficeService;
 import com.kaishengit.tms.service.TicketService;
+import com.kaishengit.tms.shiro.ShiroUtil;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -68,7 +70,8 @@ public class TicketController {
     public String saveTicketInRecord(TicketInRecord ticketInRecord,
                                      RedirectAttributes redirectAttributes){
         try {
-            ticketService.ticketInByRecord(ticketInRecord);
+            Account account = ShiroUtil.getCurrentAccount();
+            ticketService.ticketInByRecord(ticketInRecord,account);
         }catch (ServiceException e){
 
             redirectAttributes.addFlashAttribute("message",e.getMessage());
@@ -133,7 +136,8 @@ public class TicketController {
     public String ticekeOutNewSave(TicketOutRecord ticketOutRecord,RedirectAttributes redirectAttributes){
 
     try {
-        ticketService.ticketOutRecordNew(ticketOutRecord);
+        Account account = ShiroUtil.getCurrentAccount();
+        ticketService.ticketOutRecordNew(ticketOutRecord,account);
     }catch (ServiceException e){
         e.printStackTrace();
         redirectAttributes.addFlashAttribute("errorMessage",e.getMessage());

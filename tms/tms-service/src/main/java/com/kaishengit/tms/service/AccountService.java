@@ -1,8 +1,10 @@
 package com.kaishengit.tms.service;
 
+import com.github.pagehelper.PageInfo;
 import com.kaishengit.tms.entity.manage.Account;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *@Description:系统帐号的业务接口
@@ -67,4 +69,11 @@ public interface AccountService {
      *@返回值void
      */
     void delAccountById(Integer id);
+
+    /**
+     *@描述:根据条件查询account并返回分页对象
+     *@参数:[paramMap] 查询条件封装的map集合
+     *@返回值com.github.pagehelper.PageInfo<com.kaishengit.tms.entity.manage.Account>
+     */
+    PageInfo<Account> findAccountWithRolesByParams(Map<String, Object> paramMap,Integer p);
 }

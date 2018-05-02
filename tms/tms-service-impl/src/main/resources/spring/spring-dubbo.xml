@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:duboo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+
+    <duboo:application name="serviceProvider"/>
+
+    <duboo:registry address="zookeeper://140.143.245.55:2181"/>
+
+
+    <duboo:service interface="com.kaishengit.tms.service.AccountService" ref="accountServiceImpl"/>
+    <duboo:service interface="com.kaishengit.tms.service.TicketService" ref="ticketServiceImpl"/>
+    <duboo:service interface="com.kaishengit.tms.service.RolePermissionService" ref="rolePermissionServiceImpl"/>
+    <duboo:service interface="com.kaishengit.tms.service.TicketOfficeService" ref="ticketOfficeServiceImpl"/>
+
+
+</beans>

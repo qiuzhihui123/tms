@@ -23,6 +23,7 @@
         <module>./tms-service</module>
         <module>./tms-service-impl</module>
         <module>tms-finance-web</module>
+        <module>test</module>
         <!--<module>./tms-manager-web</module>-->
     </modules>
 
