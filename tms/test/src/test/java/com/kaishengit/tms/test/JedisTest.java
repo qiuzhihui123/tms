@@ -3,17 +3,11 @@ package com.kaishengit.tms.test;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.junit.Before;
 import org.junit.Test;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.Transaction;
-import redis.clients.jedis.Tuple;
+import redis.clients.jedis.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-public class RedisTest {
+public class JedisTest {
 
     private String host;
     private Integer port;
@@ -128,7 +122,7 @@ public class RedisTest {
         JedisPool jedisPool = new JedisPool(genericObjectPoolConfig,host,port);
         Jedis jedis = jedisPool.getResource();
 
-        Transaction transaction = jedis.multi();
+       /* Transaction transaction = jedis.multi();
 
         transaction.set();
         transaction.hset();
@@ -136,7 +130,28 @@ public class RedisTest {
         transaction.sadd();
         transaction.zadd();
         transaction.exec();
-
+*/
     }
+
+    @Test
+    private  void  cluster(){
+        GenericObjectPoolConfig config = new GenericObjectPoolConfig();
+        config.setMaxTotal(10);
+        config.setMinIdle(5);
+
+        Set<HostAndPort> redisSet  = new HashSet<>();
+
+        for(int i = 6000 ; i < 6006; i++){
+             HostAndPort hostAndPort = new HostAndPort("192.168.1.111",i);
+             redisSet.add(hostAndPort);
+         }
+
+        JedisCluster jedisCluster = new JedisCluster(redisSet,config);
+
+        String name = jedisCluster.get("name");
+        System.out.println(name);
+    }
+
+
 
 }
