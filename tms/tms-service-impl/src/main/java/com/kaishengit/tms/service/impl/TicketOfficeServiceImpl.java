@@ -3,11 +3,9 @@ package com.kaishengit.tms.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.kaishengit.tms.entity.base.TicketOfficeAccount;
-import com.kaishengit.tms.entity.base.TicketOfficeAccountExample;
-import com.kaishengit.tms.entity.base.TicketOfficeInfermation;
-import com.kaishengit.tms.entity.base.TicketOfficeInfermationExample;
+import com.kaishengit.tms.entity.base.*;
 import com.kaishengit.tms.exception.ServiceException;
+import com.kaishengit.tms.mapper.base.OfficeAccountLoginLogMapper;
 import com.kaishengit.tms.mapper.base.TicketOfficeAccountMapper;
 import com.kaishengit.tms.mapper.base.TicketOfficeInfermationMapper;
 import com.kaishengit.tms.service.TicketOfficeService;
@@ -33,6 +31,9 @@ public class TicketOfficeServiceImpl implements TicketOfficeService {
     TicketOfficeInfermationMapper ticketOfficeInfermationMapper;
     @Autowired
     TicketOfficeAccountMapper ticketOfficeAccountMapper;
+
+    @Autowired
+    OfficeAccountLoginLogMapper officeAccountLoginLogMapper;
 
     private Logger logger = LoggerFactory.getLogger(TicketOfficeServiceImpl.class);
 
@@ -210,6 +211,19 @@ public class TicketOfficeServiceImpl implements TicketOfficeService {
         List<TicketOfficeInfermation> officeList = ticketOfficeInfermationMapper.findOfficesByParamsMap(paramMap);
 
         return new PageInfo<TicketOfficeInfermation>(officeList);
+    }
+
+    /**
+     * @param officeAccountLoginLog
+     * @描述:根据登录记录对象保存该相应帐号的登录记录
+     * @参数:[officeAccountLoginLog]
+     * @返回值void
+     */
+    @Override
+    public void addLoginLog(OfficeAccountLoginLog officeAccountLoginLog) {
+
+        officeAccountLoginLogMapper.insertSelective(officeAccountLoginLog);
+        logger.info("添加登录记录{}",officeAccountLoginLog);
     }
 
 

@@ -68,7 +68,7 @@ public class MyShiroRealm extends AuthorizingRealm{
         UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken)authenticationToken;
         String accountMobile = usernamePasswordToken.getUsername();
         String requestIp = usernamePasswordToken.getHost();
-        System.out.println(salt);
+
         if(accountMobile != null){
             Account account = accountService.findAccountByMobile(accountMobile);
             if(account == null){
@@ -76,7 +76,9 @@ public class MyShiroRealm extends AuthorizingRealm{
             }else {
                 if(Account.STATE_NORMAL.equals(account.getAccountStatus())){
                     logger.info("登录成功,{}",account);
+
                     accountService.addLoginLog(account,requestIp);
+
                     return new SimpleAuthenticationInfo(account, account.getAccountPassword(),getName());
                 }else {
                     throw new LockedAccountException("帐号被锁定或禁用"+ account);

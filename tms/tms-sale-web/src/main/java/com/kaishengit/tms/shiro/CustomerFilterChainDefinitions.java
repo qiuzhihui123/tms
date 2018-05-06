@@ -71,12 +71,7 @@ public class CustomerFilterChainDefinitions {
        Ini ini = new Ini();
        ini.load(filterChainDefinitions);
         Ini.Section section = ini.getSection(Ini.DEFAULT_SECTION_NAME);
-     /*   List<Permission> permissionList = rolePermissionService.findAllPermissions();
 
-
-        for (Permission permission : permissionList){
-            section.put(permission.getUrl(),"perms["+permission.getPermissionCode()+"]");
-        }*/
         section.put("/**","user");
 
         //url和权限关系设置到shiroFilter中去

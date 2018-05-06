@@ -1,6 +1,7 @@
 package com.kaishengit.tms.service;
 
 import com.github.pagehelper.PageInfo;
+import com.kaishengit.tms.entity.base.OfficeAccountLoginLog;
 import com.kaishengit.tms.entity.base.TicketOfficeAccount;
 import com.kaishengit.tms.entity.base.TicketOfficeInfermation;
 import com.kaishengit.tms.entity.manage.Account;
@@ -78,4 +79,11 @@ public interface TicketOfficeService {
      *@返回值com.github.pagehelper.PageInfo<com.kaishengit.tms.entity.base.TicketOfficeInfermation>
      */
     PageInfo<TicketOfficeInfermation> findOfficesByParamsMap(Integer p, Map<String, Object> paramMap);
+
+    /**
+     *@描述:根据登录记录对象保存该相应帐号的登录记录
+     *@参数:[officeAccountLoginLog]
+     *@返回值void
+     */
+    void addLoginLog(OfficeAccountLoginLog officeAccountLoginLog);
 }

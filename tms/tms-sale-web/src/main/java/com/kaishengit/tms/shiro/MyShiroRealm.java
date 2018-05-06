@@ -1,5 +1,6 @@
 package com.kaishengit.tms.shiro;
 
+import com.kaishengit.tms.entity.base.OfficeAccountLoginLog;
 import com.kaishengit.tms.entity.base.TicketOfficeAccount;
 import com.kaishengit.tms.entity.base.TicketOfficeInfermation;
 import com.kaishengit.tms.entity.manage.Account;
@@ -18,10 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 public class MyShiroRealm extends AuthorizingRealm{
@@ -58,10 +56,17 @@ public class MyShiroRealm extends AuthorizingRealm{
                 throw new UnknownAccountException("找不到该帐号" + accountMobile);
             }else {
                 if(TicketOfficeAccount.ACCOUNT_NOMAL_STATUS.equals(ticketOfficeAccount.getStatus())){
-                    logger.info("登录成功,{}",ticketOfficeAccount);
 
-                 /*   accountService.addLoginLog(account,requestIp);*/
+                    OfficeAccountLoginLog officeAccountLoginLog = new OfficeAccountLoginLog();
+                    officeAccountLoginLog.setLoginIp(usernamePasswordToken.getHost());
+                    officeAccountLoginLog.setLoginTime(new Date());
+                    officeAccountLoginLog.setOfficeAccountId(ticketOfficeAccount.getId());
+
+                    ticketOfficeService.addLoginLog(officeAccountLoginLog);
+                    logger.info("{},登录成功");
+
                  TicketOfficeInfermation ticketOfficeInfermation = ticketOfficeService.findOfficeByAccountMobile(accountMobile);
+
                     return new SimpleAuthenticationInfo(ticketOfficeInfermation, ticketOfficeAccount.getTicketOfficeAccountPassword(),getName());
                 }else{
                     throw new LockedAccountException("帐号被锁定或禁用"+ ticketOfficeAccount);

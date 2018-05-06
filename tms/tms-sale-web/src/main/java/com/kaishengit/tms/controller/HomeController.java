@@ -28,6 +28,7 @@ import java.util.Map;
 @Controller
 public class HomeController {
 
+
     @Autowired
     private TicketService ticketService;
 
@@ -79,7 +80,7 @@ public class HomeController {
 
             //登录后跳转网址
             SavedRequest savedRequest = WebUtils.getSavedRequest(request);
-            String url = "/home";
+             String url = "/home";
             if(savedRequest != null){
                 url = savedRequest.getRequestUrl();
             }
