@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    
+    <bean id="targetConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="tcp://localhost:61616"/>
+    </bean>
+
+    <!--<bean id="targetConnectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="tcp:localhost:61616"/>
+    </bean>-->
+
+    
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="targetConnectionFactory"/>
+    </bean>
+
+    <!--目的地-->
+
+    <bean id="topicDest" class="org.apache.activemq.command.ActiveMQTopic">
+        <constructor-arg name="name" value="spring-topic"/>
+
+    </bean>
+
+
+    <!--配置spring topic的监听器和监听器的容器-->
+
+    <bean id="springTopicListener" class="com.kaishengit.tms.listener.SpringTopicListener"/>
+
+    <bean id="listenerContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="targetConnectionFactory"/>
+        <property name="destination" ref="topicDest"/>
+        <property name="messageListener" ref="springTopicListener"/>
+        <property name="concurrency" value="3-10"/>
+        <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
+
+    </bean>
+
+
+
+
+
+
+</beans>
